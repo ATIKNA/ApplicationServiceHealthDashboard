@@ -10,8 +10,8 @@ import {
 import { CheckCircle, Warning, Error } from "@mui/icons-material";
 
 import { useHealthSummary } from "../hooks/useHealthSummary";
-import { getHealthColor, STATUS_COLORS } from "../utils";
-import { A11Y_LABELS } from "../constants";
+import { getHealthColor } from "../utils";
+import { A11Y_LABELS, STATUS_COLORS } from "../constants";
 
 const HealthSummary = ({ data }) => {
   const { summary, overallHealth } = useHealthSummary(data);

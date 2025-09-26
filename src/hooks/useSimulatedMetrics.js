@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { METRICS_CONFIG, generateRandomMetrics } from "../utils";
+import { generateRandomMetrics } from "../utils";
+import { METRICS_CONFIG } from "../constants";
 
 /**
  * Custom hook for simulating real-time metrics
