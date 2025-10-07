@@ -10,7 +10,8 @@ export default function DetailsPanel({ selection }) {
   const entity = selection?.entity;
   const isEdge = kind === "edge";
   const isNode = kind === "node";
-  const metrics = useSimulatedMetrics(isEdge);
+  //[ENHANCEMENT]
+  const metrics = useSimulatedMetrics(isNode || isEdge);
 
   if (!selection) {
     return (
@@ -71,7 +72,7 @@ export default function DetailsPanel({ selection }) {
         </Stack>
       )}
 
-      {isEdge && (
+      {(isNode || isEdge) && (
         <>
           <Divider sx={{ my: 2 }} />
           <Typography variant="subtitle1">Real-time Metrics</Typography>
