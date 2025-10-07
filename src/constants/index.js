@@ -42,7 +42,7 @@ export const METRICS_CONFIG = {
 
 // Layout configuration
 export const LAYOUT_CONFIG = {
-  COLUMN_WIDTH: 420,
+  COLUMN_WIDTH: 450, // Increased from 420 to give more space between environments
   ROW_HEIGHT: 110,
   NODE_WIDTH: 300,
   NODE_PADDING: 12,

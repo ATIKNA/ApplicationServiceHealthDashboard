@@ -43,23 +43,34 @@ const layoutNodes = (nodes) => {
   // Add environment nodes
   environments.forEach((env) => {
     const position = environmentPositions.get(env.id);
+    const envWidth = 400; // container width
+    const envHeight = Math.max(
+      LAYOUT_CONFIG.MIN_ENVIRONMENT_HEIGHT,
+      (serviceCountByEnvironment.get(env.id) ?? 1) * LAYOUT_CONFIG.ROW_HEIGHT +
+        80
+    );
+
     positionedNodes.push({
       id: env.id,
       data: { label: env.name },
       position,
       type: "group",
+      // Make environment containers non-interactive so they don't block edge clicks
+      draggable: false,
+      selectable: false,
+      connectable: false,
+      // Provide explicit width/height properties so React Flow can compute
+      // parent bounds before placing child nodes with extent: 'parent'.
+      width: envWidth,
+      height: envHeight,
       style: {
-        width: 360,
-        height: Math.max(
-          LAYOUT_CONFIG.MIN_ENVIRONMENT_HEIGHT,
-          (serviceCountByEnvironment.get(env.id) ?? 1) *
-            LAYOUT_CONFIG.ROW_HEIGHT +
-            80
-        ),
-        borderRadius: 12,
-        border: "1px solid #e5e7eb",
+        width: envWidth,
+        height: envHeight,
+        borderRadius: 8,
+        border: "1px solid #d1d5db",
         padding: LAYOUT_CONFIG.ENVIRONMENT_PADDING,
-        background: "#0b0b0b14",
+        background: "transparent",
+        pointerEvents: "none", // Allow mouse events to pass through to edges
       },
     });
   });
@@ -70,15 +81,24 @@ const layoutNodes = (nodes) => {
     const row = currentRowByEnvironment.get(service.parent) ?? 0;
     currentRowByEnvironment.set(service.parent, row + 1);
 
-    const x = envPosition.x + 20;
-    const y = envPosition.y + 40 + row * LAYOUT_CONFIG.ROW_HEIGHT;
+    // Use absolute positioning to place service nodes inside environment containers
+    // This is more reliable than React Flow's parent-child positioning
+    const x = envPosition.x + LAYOUT_CONFIG.ENVIRONMENT_PADDING + 8;
+    const ENV_HEADER_HEIGHT = 60; // increased space for the environment title/header
+    const y =
+      envPosition.y +
+      LAYOUT_CONFIG.ENVIRONMENT_PADDING +
+      ENV_HEADER_HEIGHT +
+      row * LAYOUT_CONFIG.ROW_HEIGHT;
 
     positionedNodes.push({
       id: service.id,
       data: { label: service.name, status: service.status },
+      // Use absolute positioning instead of parent-child relationship
       position: { x, y },
-      parentId: service.parent,
-      extent: "parent",
+      // Remove parentId and extent to avoid React Flow positioning issues
+      // parentId: service.parent,
+      // extent: "parent",
       style: {
         padding: LAYOUT_CONFIG.NODE_PADDING,
         borderRadius: 10,
@@ -305,6 +325,9 @@ export default function ServiceMap({ onSelect, onDataLoad, registerExport }) {
       style={{ height: "70vh", border: "1px solid #e5e7eb", borderRadius: 12 }}
     >
       <ReactFlow
+        key={`reactflow-${data?.nodes?.length || 0}-${
+          data?.connections?.length || 0
+        }`}
         nodes={elements.nodes}
         edges={elements.edges}
         fitView

@@ -12,6 +12,7 @@ const StatusEdge = ({
   sourcePosition,
   targetPosition,
   data,
+  selected,
 }) => {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -24,6 +25,10 @@ const StatusEdge = ({
   const color = STATUS_COLORS[data?.status] ?? "#94a3b8";
   const strokeWidth = data?.status === "OFFLINE" ? 2 : 3;
 
+  // Add selection styling
+  const edgeColor = selected ? "#2563eb" : color; // Blue when selected
+  const edgeWidth = selected ? strokeWidth + 2 : strokeWidth; // Thicker when selected
+
   const label = `${data?.source} → ${data?.target} • ${data?.status}`;
 
   return (
@@ -32,7 +37,7 @@ const StatusEdge = ({
       <BaseEdge
         id={id}
         path={edgePath}
-        style={{ stroke: color, strokeWidth }}
+        style={{ stroke: edgeColor, strokeWidth: edgeWidth }}
       />
       <foreignObject
         x={labelX - 80}
@@ -43,7 +48,7 @@ const StatusEdge = ({
       >
         <div
           style={{
-            background: "#0b0b0bcc",
+            background: selected ? "#2563eb" : "#0b0b0bcc",
             color: "#fff",
             fontSize: 10,
             lineHeight: "16px",
@@ -51,6 +56,8 @@ const StatusEdge = ({
             borderRadius: 8,
             textAlign: "center",
             whiteSpace: "nowrap",
+            border: selected ? "2px solid #1d4ed8" : "none",
+            fontWeight: selected ? "bold" : "normal",
           }}
         >
           {data?.status}
